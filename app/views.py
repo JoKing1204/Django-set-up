@@ -95,3 +95,8 @@ def delete_item(request, item_id):
     UserItem.objects.filter(id=item_id, user=request.user).delete()
     messages.success(request, "Item deleted successfully.")
     return redirect("basic_user_home")
+
+@login_required
+def read_items(request):
+    user_items = UserItem.objects.filter(user=request.user)
+    return render(request, 'read_items.html', {'user_items': user_items})

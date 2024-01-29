@@ -1,10 +1,12 @@
 {% extends 'base.html' %}
 
 {% block content %}
-  <h2>All User Items</h2>
-  <ul>
+<div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: auto; background-color: #fff; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); padding: 20px; border-radius: 10px; width: auto; margin: 20px;">
+  <h2style="color: #333; font-size: 24px; margin-bottom: 20px;">All User Items</h2>
+  <ul style="list-style: none; padding: 0; text-align: left; width: auto;">
     {% for item in all_user_items %}
-      <li>{{ item.user.username }} - {{ item.title }} - {{ item.description }}</li>
+      <li style="margin-bottom: 10px; padding: 10px; border: 1px solid #ddd; border-radius: 5px; background-color: #f9f9f9;">{{ item.user.username }} - {{ item.title }} - {{ item.description }}</li>
     {% endfor %}
   </ul>
+</div>
 {% endblock %}
