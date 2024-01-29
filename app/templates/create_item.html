@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h2 style="color: #333; font-size: 24px; margin-bottom: 20px;">Create Item</h2>
+  <form method="post" action="{% url 'create_item' %}" style="max-width: 400px; margin: 0 auto;">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" style="width: 100%; padding: 10px; margin-bottom: 15px; background-color: #4CAF50; color: white; border: none; cursor: pointer;">Create Item</button>
+  </form>
+{% endblock %}

@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h2>All User Items</h2>
+  <ul>
+    {% for item in all_user_items %}
+      <li>{{ item.user.username }} - {{ item.title }} - {{ item.description }}</li>
+    {% endfor %}
+  </ul>
+{% endblock %}
