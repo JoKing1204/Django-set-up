@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.forms import UserCreationForm
 from .forms import CreateUserForm, UserItemForm
 from django.contrib.auth import authenticate, login, logout
@@ -33,6 +33,7 @@ def login_user(request):
             return redirect("basic_user_home")
         else:
             messages.error(request, "Invalid username or password.")
+            return render(request, "login.html")
     else:
         return render(request, "login.html")
 
@@ -54,8 +55,17 @@ def is_admin(user):
 
 @user_passes_test(is_admin)
 def admin_home(request):
-    all_user_items = UserItem.objects.all()
-    return render(request, "admin_home.html", {"all_user_items": all_user_items})
+    users = User.objects.exclude(id=request.user.id)
+    if request.method=="POST":
+        user_id = request.POST.get('user_id')
+        try:
+            user_delete= User.objects.get(id=user_id)
+            user_delete.delete()
+            messages.success(request, f"User {user_delete.username} deleted!")
+        except User.DoesNotExist:
+            messages.error(request, "No User by ye name, traveller.")
+    context = {'users':users}   
+    return render(request, "admin_home.html", context)
 
 
 @login_required
@@ -76,7 +86,7 @@ def create_item(request):
 
 @login_required
 def update_item(request, item_id):
-    item = UserItem.objects.get(id=item_id, user=request.user)
+    item = get_object_or_404(UserItem, id=item_id)
 
     if request.method == "POST":
         form = UserItemForm(request.POST, instance=item)
@@ -85,9 +95,11 @@ def update_item(request, item_id):
             messages.success(request, "Item updated successfully.")
             return redirect("basic_user_home")
         else:
-            form = UserItemForm(instance=item)
+            messages.error(request, "Error updating item.")
+    else:
+        form = UserItemForm(instance=item)
 
-        return render(request, "update_item.html", {"form": form})
+    return render(request, "update_item.html", {'form':form, 'item':item})
 
 
 @login_required
@@ -98,5 +110,6 @@ def delete_item(request, item_id):
 
 @login_required
 def read_items(request):
-    user_items = UserItem.objects.filter(user=request.user)
-    return render(request, 'read_items.html', {'user_items': user_items})
+    query= request.GET.get('q', '')
+    user_items = UserItem.objects.filter(title__icontains=query)
+    return render(request, 'read_items.html', {'user_items': user_items, 'query':query})
